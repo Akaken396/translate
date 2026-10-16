@@ -79,9 +79,14 @@ def is_simple_char(c):
     return c.isalpha() or c.isdigit() or c in '._-+∞'
 
 
+COMMENT_LINE_RE = re.compile(r'^[ \t]*(?://|#).*$', re.M)
+
+
 class SnbtParser:
     def __init__(self, text):
-        self.s = text
+        # FTB Library ignores lines starting with // or #. Blank them out
+        # (same length) so positions still match the original text.
+        self.s = COMMENT_LINE_RE.sub(lambda m: ' ' * len(m.group()), text)
         self.i = 0
         self.n = len(text)
 
